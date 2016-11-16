@@ -1,9 +1,19 @@
 package hu.unideb.inf.brickset.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(namespace = "http://www.inf.unideb.hu/Brickset")
 public class UriValuePair<T> {
 
+	@XmlAttribute
 	private String uri;
 
+	@XmlElement
 	private T value;
 
 	public UriValuePair() {

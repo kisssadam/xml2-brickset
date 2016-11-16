@@ -23,6 +23,7 @@ import hu.unideb.inf.brickset.model.CurrentValue;
 import hu.unideb.inf.brickset.model.Dimensions;
 import hu.unideb.inf.brickset.model.Price;
 import hu.unideb.inf.brickset.model.UriValuePair;
+import hu.unideb.inf.jaxb.JAXBUtil;
 
 public class BricksetParser {
 
@@ -31,7 +32,8 @@ public class BricksetParser {
 	private static final String MALFORMED_DOCUMENT = "Malformed document";
 
 	public Brickset parse(String url) throws IOException {
-		Document doc = Jsoup.connect(url).userAgent("Mozilla").cookie("PreferredCountry2", "CountryCode=HU&CountryName=Hungary").get();
+		Document doc = Jsoup.connect(url).userAgent("Mozilla")
+				.cookie("PreferredCountry2", "CountryCode=HU&CountryName=Hungary").get();
 		Brickset brickset = parse(doc);
 		brickset.setUri(url);
 		return brickset;
@@ -165,7 +167,8 @@ public class BricksetParser {
 	private void parseRrp(Document doc, Brickset brickset) {
 		String multipleRrp = extractBricksetDescription(doc, "RRP");
 		if (StringUtils.isNotBlank(multipleRrp)) {
-			Pattern pattern = Pattern.compile("(£(?<pounds>\\d+\\.\\d+))?( / )?(\\$(?<dollars>\\d+\\.\\d+))?( / )?((?<euros>\\d+\\.\\d+)€)?");
+			Pattern pattern = Pattern.compile(
+					"(£(?<pounds>\\d+\\.\\d+))?( / )?(\\$(?<dollars>\\d+\\.\\d+))?( / )?((?<euros>\\d+\\.\\d+)€)?");
 			Matcher matcher = pattern.matcher(multipleRrp);
 			List<Price> rrp = new ArrayList<>();
 			if (matcher.matches()) {
@@ -196,7 +199,8 @@ public class BricksetParser {
 		log.debug("Current value to parse: '{}'", currentValueString);
 		if (StringUtils.isNotBlank(currentValueString)) {
 			// Garantált, hogy "Ft" lesz benne, mert küldöm a PreferredCountry2 nevű Cookie-ket a szervernek!
-			Pattern pattern = Pattern.compile("New:(( ~Ft(?<newCurrentValue>\\d+(\\.\\d+)?))|.*).*Used:(( ~Ft(?<usedCurrentValue>\\d+(\\.\\d+)?))|.*)");
+			Pattern pattern = Pattern.compile(
+					"New:(( ~Ft(?<newCurrentValue>\\d+(\\.\\d+)?))|.*).*Used:(( ~Ft(?<usedCurrentValue>\\d+(\\.\\d+)?))|.*)");
 			Matcher matcher = pattern.matcher(currentValueString);
 			if (matcher.matches()) {
 				String newValue = matcher.group("newCurrentValue");
@@ -235,7 +239,8 @@ public class BricksetParser {
 		Dimensions dimensions = new Dimensions();
 		String dimensionsString = extractBricksetDescription(doc, "Dimensions");
 		if (StringUtils.isNotBlank(dimensionsString)) {
-			Pattern pattern = Pattern.compile("(?<width>\\d+\\.\\d+) x (?<height>\\d+\\.\\d+) x (?<thickness>\\d+\\.\\d+) cm.*");
+			Pattern pattern = Pattern
+					.compile("(?<width>\\d+\\.\\d+) x (?<height>\\d+\\.\\d+) x (?<thickness>\\d+\\.\\d+) cm.*");
 			Matcher matcher = pattern.matcher(dimensionsString);
 			if (matcher.matches()) {
 				String width = matcher.group("width");
@@ -338,7 +343,7 @@ public class BricksetParser {
 		if (StringUtils.isNotBlank(ratingValue)) {
 			rating.setValue(new BigDecimal(ratingValue));
 		}
-		rating.setUri(ratingElement.children().attr("href"));
+		rating.setUri(ratingElement.children().attr("abs:href"));
 		brickset.setRating(rating);
 		log.debug("Extracted rating: {}", brickset.getRating());
 	}
@@ -367,17 +372,16 @@ public class BricksetParser {
 		return doc.select(cssQuery).first();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		String url = "http://brickset.com/sets/7965-1/Millennium-Falcon";
 		// String url = "http://brickset.com/sets/4501-1/Mos-Eisley-Cantina";
 		// String url = "http://brickset.com/sets/30346-1/Prison-Island-Helicopter";
 
-		try {
-			Brickset brickset = new BricksetParser().parse(url);
-			log.info("Parsed brickset: {}", brickset);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Brickset brickset = new BricksetParser().parse(url);
+
+		JAXBUtil.toXML(brickset, System.out);
+
+		log.info("Parsed brickset: {}", brickset);
 	}
 
 }

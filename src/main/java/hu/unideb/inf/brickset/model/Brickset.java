@@ -3,59 +3,94 @@ package hu.unideb.inf.brickset.model;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-/**
- * Azért nem használok primitív típusokat, mert mi lenne akkor, ha nem létezik az adott érték az oldalon.
- */
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "uri", "number", "name", "type", "themeGroup", "theme", "subTheme", "yearReleased", "tags",
+		"pieces", "minifigs", "rrp", "currentValue", "pricePerPiece", "ageRange", "packaging", "dimensions", "weight",
+		"barcodes", "legoItemNumbers", "availability", "rating" })
 public class Brickset {
 
+	@XmlAttribute(required = true)
 	private String uri;
 
+	@XmlElement(required = true)
 	private String number;
 
+	@XmlElement(required = true)
 	private String name;
 
+	@XmlElement(required = true)
 	private String type;
 
+	@XmlElement
 	private String themeGroup;
 
+	@XmlElement
 	private UriValuePair<String> theme;
 
+	@XmlElement
 	private UriValuePair<String> subTheme;
 
+	@XmlElement
 	private UriValuePair<Integer> yearReleased;
 
+	@XmlElementWrapper
+	@XmlElement(name = "tag")
 	private UriValuePair<String>[] tags;
 
+	@XmlElement
 	private UriValuePair<Long> pieces;
 
+	@XmlElement
 	private UriValuePair<Integer> minifigs;
 
 	/**
 	 * Recommended retail price
 	 */
+	@XmlElementWrapper
+	@XmlElement(name = "rrp")
 	private Price[] rrp;
 
+	@XmlElement
 	private CurrentValue currentValue;
 
 	/**
 	 * TODO ehhez biztos String kellene: "10.6p / 11.2c / 12.0c"?
 	 */
+	@XmlElement
 	private String pricePerPiece;
 
+	@XmlElement
 	private String ageRange;
 
+	@XmlElement
 	private String packaging;
 
+	@XmlElement
 	private Dimensions dimensions;
 
+	@XmlElement
 	private BigDecimal weight;
 
+	@XmlElementWrapper
+	@XmlElement(name = "barcode")
 	private Barcode[] barcodes;
 
+	@XmlElement
 	private Long legoItemNumbers;
 
+	@XmlElement
 	private String availability;
 
+	@XmlElement
 	private UriValuePair<BigDecimal> rating;
 
 	public String getUri() {
