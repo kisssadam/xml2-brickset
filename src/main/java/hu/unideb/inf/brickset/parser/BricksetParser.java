@@ -182,7 +182,20 @@ public class BricksetParser {
 			}
 			log.debug("Extracted weight: {}", brickset.getWeight());
 
+			// TODO
 			log.debug("Extracted barcodes: {}", brickset.getBarCodes());
+
+			String legoItemNumbersString = extractBricksetDescription(doc, "LEGO item numbers");
+			if (StringUtils.isNotBlank(legoItemNumbersString)) {
+				Pattern legoItemNumbersPattern = Pattern.compile(".*: (?<legoItemNumber>\\d+)");
+				Matcher legoItemNumbersMatcher = legoItemNumbersPattern.matcher(legoItemNumbersString);
+				if (legoItemNumbersMatcher.matches()) {
+					String legoItemNumber = legoItemNumbersMatcher.group("legoItemNumber");
+					if (StringUtils.isNotBlank(legoItemNumber)) {
+						brickset.setLegoItemNumbers(Long.valueOf(legoItemNumber));
+					}
+				}
+			}
 			log.debug("Extracted lego item numbers: {}", brickset.getLegoItemNumbers());
 
 			brickset.setAvailability(extractBricksetDescription(doc, "Availability"));
