@@ -79,11 +79,11 @@ public class BricksetParser {
 
 			List<UriValuePair<String>> tags = new ArrayList<>();
 			Element tagElement = extractBricksetDescriptionElement(doc, "Tags");
-			Elements tagsChildren = tagElement.children();
-			if (tagElement != null && tagsChildren != null) {
-				for (Element element : tagsChildren.select("a.name")) {
-					String tagUri = element.attr("abs:href");
-					String tagValue = element.text();
+			if (tagElement != null) {
+				Elements tagElements = tagElement.select("span > a");
+				tagElements.forEach(tag -> {
+					String tagUri = tag.absUrl("href");
+					String tagValue = tag.text().trim();
 
 					log.debug("tagUri: '{}', tagValue: '{}'", tagUri, tagValue);
 
@@ -91,7 +91,7 @@ public class BricksetParser {
 					tagPair.setUri(tagUri);
 					tagPair.setValue(tagValue);
 					tags.add(tagPair);
-				}
+				});
 			}
 			brickset.setTags(tags.toArray(new UriValuePair[tags.size()]));
 			log.debug("Extracted tags: {}", Arrays.toString(brickset.getTags()));
@@ -111,28 +111,33 @@ public class BricksetParser {
 			log.debug("Extracted minifigs: {}", brickset.getMinifigs());
 
 			String multipleRrp = extractBricksetDescription(doc, "RRP");
-			Pattern rrpPattern = Pattern.compile("(£(?<pounds>\\d+\\.\\d+))?( / )?(\\$(?<dollars>\\d+\\.\\d+))?( / )?((?<euros>\\d+\\.\\d+)€)?");
-			Matcher rrpMatcher = rrpPattern.matcher(multipleRrp);
-			List<Price> rrp = new ArrayList<>();
-			if (rrpMatcher.matches()) {
-				String pounds = rrpMatcher.group("pounds");
-				String dollars = rrpMatcher.group("dollars");
-				String euros = rrpMatcher.group("euros");
+			if (StringUtils.isNotBlank(multipleRrp)) {
+				Pattern rrpPattern = Pattern.compile("(£(?<pounds>\\d+\\.\\d+))?( / )?(\\$(?<dollars>\\d+\\.\\d+))?( / )?((?<euros>\\d+\\.\\d+)€)?");
+				Matcher rrpMatcher = rrpPattern.matcher(multipleRrp);
+				List<Price> rrp = new ArrayList<>();
+				if (rrpMatcher.matches()) {
+					String pounds = rrpMatcher.group("pounds");
+					String dollars = rrpMatcher.group("dollars");
+					String euros = rrpMatcher.group("euros");
 
-				log.debug("pounds: {}, dollars: {}, euros: {}", pounds, dollars, euros);
+					log.debug("pounds: {}, dollars: {}, euros: {}", pounds, dollars, euros);
 
-				if (StringUtils.isNotBlank(pounds)) {
-					rrp.add(new Price(new BigDecimal(pounds), "GBP"));
+					if (StringUtils.isNotBlank(pounds)) {
+						rrp.add(new Price(new BigDecimal(pounds), "GBP"));
+					}
+					if (StringUtils.isNotBlank(dollars)) {
+						rrp.add(new Price(new BigDecimal(dollars), "USD"));
+					}
+					if (StringUtils.isNotBlank(euros)) {
+						rrp.add(new Price(new BigDecimal(euros), "EUR"));
+					}
 				}
-				if (StringUtils.isNotBlank(dollars)) {
-					rrp.add(new Price(new BigDecimal(dollars), "USD"));
-				}
-				if (StringUtils.isNotBlank(euros)) {
-					rrp.add(new Price(new BigDecimal(euros), "EUR"));
-				}
+				brickset.setRrp(rrp.toArray(new Price[rrp.size()]));
 			}
-			brickset.setRrp(rrp.toArray(new Price[rrp.size()]));
 			log.debug("Extracted rrp: {}", Arrays.toString(brickset.getRrp()));
+
+			// TODO
+			log.debug("Extracted current value: {}", brickset.getCurrentValue());
 
 			brickset.setPricePerPiece(extractBricksetDescription(doc, "Price per piece"));
 			log.debug("Extracted price per piece: '{}'", brickset.getPricePerPiece());
@@ -228,9 +233,9 @@ public class BricksetParser {
 
 		Element element = extractBricksetDescriptionElement(doc, descriptionName);
 		if (element != null) {
-			Elements children = element.children();
-			if (children != null && !children.isEmpty()) {
-				uri = children.attr("abs:href");
+			Element childElemenet = element.select("a").first();
+			if (childElemenet != null) {
+				uri = childElemenet.absUrl("href");
 			}
 		}
 
@@ -245,6 +250,7 @@ public class BricksetParser {
 	public static void main(String[] args) {
 		String url = "http://brickset.com/sets/7965-1/Millennium-Falcon";
 		// String url = "http://brickset.com/sets/4501-1/Mos-Eisley-Cantina";
+		// String url = "http://brickset.com/sets/30346-1/Prison-Island-Helicopter";
 
 		try {
 			Brickset brickset = new BricksetParser().parse(url);
