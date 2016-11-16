@@ -2,7 +2,7 @@ package hu.unideb.inf.brickset.model;
 
 import java.math.BigDecimal;
 
-public class Dimension {
+public class Dimensions {
 
 	private BigDecimal width;
 
@@ -37,7 +37,7 @@ public class Dimension {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Dimension [width=");
+		builder.append("Dimensions [width=");
 		builder.append(width);
 		builder.append(", height=");
 		builder.append(height);

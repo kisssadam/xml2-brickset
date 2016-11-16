@@ -47,7 +47,7 @@ public class Brickset {
 
 	private String packaging;
 
-	private Dimension dimension;
+	private Dimensions dimensions;
 
 	private BigDecimal weight;
 
@@ -187,12 +187,12 @@ public class Brickset {
 		this.packaging = packaging;
 	}
 
-	public Dimension getDimension() {
-		return dimension;
+	public Dimensions getDimensions() {
+		return dimensions;
 	}
 
-	public void setDimension(Dimension dimension) {
-		this.dimension = dimension;
+	public void setDimensions(Dimensions dimensions) {
+		this.dimensions = dimensions;
 	}
 
 	public BigDecimal getWeight() {
@@ -270,8 +270,8 @@ public class Brickset {
 		builder.append(ageRange);
 		builder.append(", packaging=");
 		builder.append(packaging);
-		builder.append(", dimension=");
-		builder.append(dimension);
+		builder.append(", dimensions=");
+		builder.append(dimensions);
 		builder.append(", weight=");
 		builder.append(weight);
 		builder.append(", barCodes=");

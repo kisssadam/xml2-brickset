@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.unideb.inf.brickset.model.Brickset;
+import hu.unideb.inf.brickset.model.Dimensions;
 import hu.unideb.inf.brickset.model.Price;
 import hu.unideb.inf.brickset.model.UriValuePair;
 
@@ -45,16 +47,16 @@ public class BricksetParser {
 
 		try {
 			brickset.setNumber(extractBricksetDescription(doc, "Set number"));
-			log.debug("Extracted set number: {}", brickset.getNumber());
+			log.debug("Extracted set number: '{}'", brickset.getNumber());
 
 			brickset.setName(extractBricksetDescription(doc, "Name"));
-			log.debug("Extracted name: {}", brickset.getName());
+			log.debug("Extracted name: '{}'", brickset.getName());
 
 			brickset.setType(extractBricksetDescription(doc, "Set type"));
-			log.debug("Extracted set type: {}", brickset.getType());
+			log.debug("Extracted set type: '{}'", brickset.getType());
 
 			brickset.setThemeGroup(extractBricksetDescription(doc, "Theme group"));
-			log.debug("Extracted theme group: {}", brickset.getThemeGroup());
+			log.debug("Extracted theme group: '{}'", brickset.getThemeGroup());
 
 			UriValuePair<String> theme = new UriValuePair<>();
 			theme.setUri(extractBricksetDescriptionUri(doc, "Theme"));
@@ -100,24 +102,85 @@ public class BricksetParser {
 				String pounds = rrpMatcher.group("pounds");
 				String dollars = rrpMatcher.group("dollars");
 				String euros = rrpMatcher.group("euros");
-				
+
 				log.debug("pounds: {}, dollars: {}, euros: {}", pounds, dollars, euros);
-				
-				if (pounds != null) {
+
+				if (StringUtils.isNotBlank(pounds)) {
 					rrp.add(new Price(new BigDecimal(pounds), "GBP"));
 				}
-				if (dollars != null) {
+				if (StringUtils.isNotBlank(dollars)) {
 					rrp.add(new Price(new BigDecimal(dollars), "USD"));
 				}
-				if (euros != null) {
+				if (StringUtils.isNotBlank(euros)) {
 					rrp.add(new Price(new BigDecimal(euros), "EUR"));
 				}
 			}
 			brickset.setRrp(rrp.toArray(new Price[rrp.size()]));
 			log.debug("Extracted rrp: {}", Arrays.toString(brickset.getRrp()));
-			
+
 			brickset.setPricePerPiece(extractBricksetDescription(doc, "Price per piece"));
-			log.debug("Extracted price per piece: {}", brickset.getPricePerPiece());
+			log.debug("Extracted price per piece: '{}'", brickset.getPricePerPiece());
+
+			brickset.setAgeRange(extractBricksetDescription(doc, "Age range"));
+			log.debug("Extracted age range: '{}'", brickset.getAgeRange());
+
+			brickset.setPackaging(extractBricksetDescription(doc, "Packaging"));
+			log.debug("Extracted packaging: '{}'", brickset.getPackaging());
+
+			Dimensions dimensions = new Dimensions();
+			String dimensionsString = extractBricksetDescription(doc, "Dimensions");
+			if (StringUtils.isNotBlank(dimensionsString)) {
+				Pattern dimensionsPattern = Pattern.compile("(?<width>\\d+\\.\\d+) x (?<height>\\d+\\.\\d+) x (?<thickness>\\d+\\.\\d+) cm.*");
+				Matcher dimensionsMatcher = dimensionsPattern.matcher(dimensionsString);
+				if (dimensionsMatcher.matches()) {
+					String width = dimensionsMatcher.group("width");
+					String height = dimensionsMatcher.group("height");
+					String thickness = dimensionsMatcher.group("thickness");
+
+					log.debug("Dimension width: {}, height: {}, thickness: {}", width, height, thickness);
+
+					if (StringUtils.isNotBlank(width)) {
+						dimensions.setWidth(new BigDecimal(width));
+					}
+					if (StringUtils.isNotBlank(height)) {
+						dimensions.setHeight(new BigDecimal(height));
+					}
+					if (StringUtils.isNotBlank(thickness)) {
+						dimensions.setThickness(new BigDecimal(thickness));
+					}
+				}
+			}
+			brickset.setDimensions(dimensions);
+			log.debug("Extracted dimensions: '{}'", brickset.getDimensions());
+
+			String weightString = extractBricksetDescription(doc, "Weight");
+			if (StringUtils.isNotBlank(weightString)) {
+				Pattern weightPattern = Pattern.compile("(?<weight>\\d+\\.\\d+)Kg.*");
+				Matcher weightMatcher = weightPattern.matcher(weightString);
+				if (weightMatcher.matches()) {
+					String weight = weightMatcher.group("weight");
+					if (StringUtils.isNotBlank(weight)) {
+						brickset.setWeight(new BigDecimal(weight));
+					}
+				}
+			}
+			log.debug("Extracted weight: {}", brickset.getWeight());
+
+			log.debug("Extracted barcodes: {}", brickset.getBarCodes());
+			log.debug("Extracted lego item numbers: {}", brickset.getLegoItemNumbers());
+
+			brickset.setAvailability(extractBricksetDescription(doc, "Availability"));
+			log.debug("Extracted availability: '{}'", brickset.getAvailability());
+
+			UriValuePair<BigDecimal> rating = new UriValuePair<>();
+			Element ratingElement = extractBricksetDescriptionElement(doc, "Rating");
+			String ratingValue = ratingElement.children().attr("title");
+			if (StringUtils.isNotBlank(ratingValue)) {
+				rating.setValue(new BigDecimal(ratingValue));
+			}
+			rating.setUri(ratingElement.children().attr("href"));
+			brickset.setRating(rating);
+			log.debug("Extracted rating: {}", brickset.getRating());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IOException(MALFORMED_DOCUMENT);
@@ -127,7 +190,8 @@ public class BricksetParser {
 	}
 
 	private String extractBricksetDescription(Document doc, String descriptionName) {
-		return extractBricksetDescriptionElement(doc, descriptionName).text();
+		Element element = extractBricksetDescriptionElement(doc, descriptionName);
+		return element == null ? null : element.text();
 	}
 
 	private String extractBricksetDescriptionUri(Document doc, String descriptionName) {
@@ -151,7 +215,7 @@ public class BricksetParser {
 
 	public static void main(String[] args) {
 		String url = "http://brickset.com/sets/7965-1/Millennium-Falcon";
-//		String url = "http://brickset.com/sets/4501-1/Mos-Eisley-Cantina";
+		// String url = "http://brickset.com/sets/4501-1/Mos-Eisley-Cantina";
 
 		BricksetParser bricksetParser = new BricksetParser();
 		try {
