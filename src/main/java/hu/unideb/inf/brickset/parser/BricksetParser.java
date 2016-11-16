@@ -77,7 +77,23 @@ public class BricksetParser {
 			brickset.setYearReleased(yearReleased);
 			log.debug("Extracted year released: {}", brickset.getYearReleased());
 
-			// TODO tags
+			List<UriValuePair<String>> tags = new ArrayList<>();
+			Element tagElement = extractBricksetDescriptionElement(doc, "Tags");
+			Elements tagsChildren = tagElement.children();
+			if (tagElement != null && tagsChildren != null) {
+				for (Element element : tagsChildren.select("a.name")) {
+					String tagUri = element.attr("abs:href");
+					String tagValue = element.text();
+
+					log.debug("tagUri: '{}', tagValue: '{}'", tagUri, tagValue);
+
+					UriValuePair<String> tagPair = new UriValuePair<>();
+					tagPair.setUri(tagUri);
+					tagPair.setValue(tagValue);
+					tags.add(tagPair);
+				}
+			}
+			brickset.setTags(tags.toArray(new UriValuePair[tags.size()]));
 			log.debug("Extracted tags: {}", Arrays.toString(brickset.getTags()));
 
 			UriValuePair<Long> pieces = new UriValuePair<>();
@@ -217,14 +233,12 @@ public class BricksetParser {
 		String url = "http://brickset.com/sets/7965-1/Millennium-Falcon";
 		// String url = "http://brickset.com/sets/4501-1/Mos-Eisley-Cantina";
 
-		BricksetParser bricksetParser = new BricksetParser();
 		try {
-			Brickset brickset = bricksetParser.parse(url);
+			Brickset brickset = new BricksetParser().parse(url);
 			log.info("Parsed brickset: {}", brickset);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 }
