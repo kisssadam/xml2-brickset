@@ -173,6 +173,7 @@ public class BricksetParser {
 
 	private void parseRrp(Document doc, Brickset brickset) {
 		String multipleRrp = extractBricksetDescription(doc, "RRP");
+		log.debug("rrp to match: '{}'", multipleRrp);
 		if (StringUtils.isNotBlank(multipleRrp)) {
 			Pattern pattern = Pattern.compile(
 					"(£(?<pounds>\\d+\\.\\d+))?( / )?(\\$(?<dollars>\\d+\\.\\d+))?( / )?((?<euros>\\d+\\.\\d+)€)?");
@@ -202,8 +203,10 @@ public class BricksetParser {
 
 	private void parseCurrentValue(Document doc, Brickset brickset) {
 		CurrentValue currentValue = new CurrentValue();
+
 		String currentValueString = extractBricksetDescription(doc, "Current value");
-		log.debug("Current value to parse: '{}'", currentValueString);
+		log.debug("current value to match: '{}'", currentValueString);
+
 		if (StringUtils.isNotBlank(currentValueString)) {
 			// Garantált, hogy "Ft" lesz benne, mert küldöm a PreferredCountry2 nevű Cookie-ket a szervernek!
 			Pattern pattern = Pattern.compile(
@@ -247,7 +250,10 @@ public class BricksetParser {
 
 	private void parseDimensions(Document doc, Brickset brickset) {
 		Dimensions dimensions = new Dimensions();
+
 		String dimensionsString = extractBricksetDescription(doc, "Dimensions");
+		log.debug("dimension to match: '{}'", dimensionsString);
+
 		if (StringUtils.isNotBlank(dimensionsString)) {
 			Pattern pattern = Pattern
 					.compile("(?<width>\\d+\\.\\d+) x (?<height>\\d+\\.\\d+) x (?<thickness>\\d+\\.\\d+) cm.*");
@@ -276,6 +282,8 @@ public class BricksetParser {
 
 	private void parseWeight(Document doc, Brickset brickset) {
 		String weightString = extractBricksetDescription(doc, "Weight");
+		log.debug("weight to match: '{}'", weightString);
+
 		if (StringUtils.isNotBlank(weightString)) {
 			Pattern pattern = Pattern.compile("(?<weight>\\d+\\.\\d+)Kg.*");
 			Matcher matcher = pattern.matcher(weightString);
@@ -291,6 +299,8 @@ public class BricksetParser {
 
 	private void parseBarcodes(Document doc, Brickset brickset) {
 		String barcodesString = extractBricksetDescription(doc, "Barcodes");
+		log.debug("barcodes to match: '{}'", barcodesString);
+
 		if (StringUtils.isNotBlank(barcodesString)) {
 			String upc = null;
 			String ean = null;
@@ -328,6 +338,8 @@ public class BricksetParser {
 
 	private void parseLegoItemNumbers(Document doc, Brickset brickset) {
 		String legoItemNumbersString = extractBricksetDescription(doc, "LEGO item numbers");
+		log.debug("lego item numbers to match: '{}'", legoItemNumbersString);
+
 		if (StringUtils.isNotBlank(legoItemNumbersString)) {
 			Pattern pattern = Pattern.compile(".*: (?<legoItemNumbers>\\d+)");
 			Matcher matcher = pattern.matcher(legoItemNumbersString);
