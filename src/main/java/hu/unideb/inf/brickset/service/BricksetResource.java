@@ -11,10 +11,8 @@ import hu.unideb.inf.brickset.parser.BricksetParser;
 public class BricksetResource extends ServerResource {
 
 	@Get("xml|json")
-	public Brickset represent() throws IOException {
-		String setNumber = getAttribute("setNumber");
-		BricksetParser bricksetParser = new BricksetParser();
-		return bricksetParser.parse("http://brickset.com/sets/" + setNumber);
+	public Brickset findBySetNumber() throws IOException {
+		return new BricksetParser().parse("http://brickset.com/sets/" + getAttribute("setNumber"));
 	}
 
 }
