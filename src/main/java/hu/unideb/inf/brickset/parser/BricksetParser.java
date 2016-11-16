@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.unideb.inf.brickset.model.Brickset;
+import hu.unideb.inf.brickset.model.CurrentValue;
 import hu.unideb.inf.brickset.model.Dimensions;
 import hu.unideb.inf.brickset.model.Price;
 import hu.unideb.inf.brickset.model.UriValuePair;
@@ -29,7 +30,9 @@ public class BricksetParser {
 	private static final String MALFORMED_DOCUMENT = "Malformed document";
 
 	public Brickset parse(String url) throws IOException {
-		Document doc = Jsoup.connect(url).userAgent("Mozilla").get();
+		// Document doc = Jsoup.connect(url).userAgent("Mozilla").cookie("PreferredCountry2",
+		// "CountryCode=GB&amp;CountryName=United Kingdom").get();
+		Document doc = Jsoup.connect(url).userAgent("Mozilla").cookie("PreferredCountry2", "CountryCode=HU&CountryName=Hungary").get();
 		Brickset brickset = parse(doc);
 		brickset.setUri(url);
 		return brickset;
@@ -136,7 +139,28 @@ public class BricksetParser {
 			}
 			log.debug("Extracted rrp: {}", Arrays.toString(brickset.getRrp()));
 
-			// TODO
+			CurrentValue currentValue = new CurrentValue();
+			String currentValueString = extractBricksetDescription(doc, "Current value");
+			log.debug("Current value to parse: '{}'", currentValueString);
+			if (StringUtils.isNotBlank(currentValueString)) {
+				// Garantált, hogy "Ft" lesz benne, mert küldöm a PreferredCountry2 nevű Cookie-ket a szervernek!
+				Pattern pattern = Pattern.compile("New:(( ~Ft(?<newCurrentValue>\\d+(\\.\\d+)?))|.*).*Used:(( ~Ft(?<usedCurrentValue>\\d+(\\.\\d+)?))|.*)");
+				Matcher matcher = pattern.matcher(currentValueString);
+				if (matcher.matches()) {
+					String newValue = matcher.group("newCurrentValue");
+					String usedValue = matcher.group("usedCurrentValue");
+
+					log.debug("Current value: new: '{}', used: '{}'", newValue, usedValue);
+
+					if (StringUtils.isNotBlank(newValue)) {
+						currentValue.setNewValue(new Price(new BigDecimal(newValue), "HUF"));
+					}
+					if (StringUtils.isNotBlank(usedValue)) {
+						currentValue.setUsedValue(new Price(new BigDecimal(usedValue), "HUF"));
+					}
+				}
+			}
+			brickset.setCurrentValue(currentValue);
 			log.debug("Extracted current value: {}", brickset.getCurrentValue());
 
 			brickset.setPricePerPiece(extractBricksetDescription(doc, "Price per piece"));
@@ -151,12 +175,12 @@ public class BricksetParser {
 			Dimensions dimensions = new Dimensions();
 			String dimensionsString = extractBricksetDescription(doc, "Dimensions");
 			if (StringUtils.isNotBlank(dimensionsString)) {
-				Pattern dimensionsPattern = Pattern.compile("(?<width>\\d+\\.\\d+) x (?<height>\\d+\\.\\d+) x (?<thickness>\\d+\\.\\d+) cm.*");
-				Matcher dimensionsMatcher = dimensionsPattern.matcher(dimensionsString);
-				if (dimensionsMatcher.matches()) {
-					String width = dimensionsMatcher.group("width");
-					String height = dimensionsMatcher.group("height");
-					String thickness = dimensionsMatcher.group("thickness");
+				Pattern pattern = Pattern.compile("(?<width>\\d+\\.\\d+) x (?<height>\\d+\\.\\d+) x (?<thickness>\\d+\\.\\d+) cm.*");
+				Matcher matcher = pattern.matcher(dimensionsString);
+				if (matcher.matches()) {
+					String width = matcher.group("width");
+					String height = matcher.group("height");
+					String thickness = matcher.group("thickness");
 
 					log.debug("Dimension width: {}, height: {}, thickness: {}", width, height, thickness);
 
@@ -248,9 +272,9 @@ public class BricksetParser {
 	}
 
 	public static void main(String[] args) {
-		String url = "http://brickset.com/sets/7965-1/Millennium-Falcon";
-		// String url = "http://brickset.com/sets/4501-1/Mos-Eisley-Cantina";
-		// String url = "http://brickset.com/sets/30346-1/Prison-Island-Helicopter";
+//		 String url = "http://brickset.com/sets/7965-1/Millennium-Falcon";
+		 String url = "http://brickset.com/sets/4501-1/Mos-Eisley-Cantina";
+//		String url = "http://brickset.com/sets/30346-1/Prison-Island-Helicopter";
 
 		try {
 			Brickset brickset = new BricksetParser().parse(url);

@@ -36,7 +36,7 @@ public class Brickset {
 	 */
 	private Price[] rrp;
 
-	private BigDecimal currentValue;
+	private CurrentValue currentValue;
 
 	/**
 	 * TODO ehhez biztos String kellene: "10.6p / 11.2c / 12.0c"?
@@ -155,11 +155,11 @@ public class Brickset {
 		this.rrp = rrp;
 	}
 
-	public BigDecimal getCurrentValue() {
+	public CurrentValue getCurrentValue() {
 		return currentValue;
 	}
 
-	public void setCurrentValue(BigDecimal currentValue) {
+	public void setCurrentValue(CurrentValue currentValue) {
 		this.currentValue = currentValue;
 	}
 
