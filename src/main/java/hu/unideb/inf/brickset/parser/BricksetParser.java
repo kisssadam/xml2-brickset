@@ -93,7 +93,7 @@ public class BricksetParser {
 			log.debug("Extracted minifigs: {}", brickset.getMinifigs());
 
 			String multipleRrp = extractBricksetDescription(doc, "RRP");
-			Pattern rrpPattern = Pattern.compile("(£(?<pounds>\\d+\\.\\d+))?( / )?(\\$(?<dollars>\\d+\\.\\d+))?( / )?(?<euros>\\d+\\.\\d+€)?");
+			Pattern rrpPattern = Pattern.compile("(£(?<pounds>\\d+\\.\\d+))?( / )?(\\$(?<dollars>\\d+\\.\\d+))?( / )?((?<euros>\\d+\\.\\d+)€)?");
 			Matcher rrpMatcher = rrpPattern.matcher(multipleRrp);
 			List<Price> rrp = new ArrayList<>();
 			if (rrpMatcher.matches()) {
@@ -115,6 +115,9 @@ public class BricksetParser {
 			}
 			brickset.setRrp(rrp.toArray(new Price[rrp.size()]));
 			log.debug("Extracted rrp: {}", Arrays.toString(brickset.getRrp()));
+			
+			brickset.setPricePerPiece(extractBricksetDescription(doc, "Price per piece"));
+			log.debug("Extracted price per piece: {}", brickset.getPricePerPiece());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IOException(MALFORMED_DOCUMENT);
@@ -147,8 +150,8 @@ public class BricksetParser {
 	}
 
 	public static void main(String[] args) {
-//		String url = "http://brickset.com/sets/7965-1/Millennium-Falcon";
-		String url = "http://brickset.com/sets/4501-1/Mos-Eisley-Cantina";
+		String url = "http://brickset.com/sets/7965-1/Millennium-Falcon";
+//		String url = "http://brickset.com/sets/4501-1/Mos-Eisley-Cantina";
 
 		BricksetParser bricksetParser = new BricksetParser();
 		try {
