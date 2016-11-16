@@ -2,7 +2,6 @@ package hu.unideb.inf.brickset.model;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * Azért nem használok primitív típusokat, mert mi lenne akkor, ha nem létezik az adott érték az oldalon.
@@ -51,7 +50,7 @@ public class Brickset {
 
 	private BigDecimal weight;
 
-	private Map<String, String> barCodes;
+	private Barcode[] barcodes;
 
 	private Long legoItemNumbers;
 
@@ -203,12 +202,12 @@ public class Brickset {
 		this.weight = weight;
 	}
 
-	public Map<String, String> getBarCodes() {
-		return barCodes;
+	public Barcode[] getBarcodes() {
+		return barcodes;
 	}
 
-	public void setBarCodes(Map<String, String> barCodes) {
-		this.barCodes = barCodes;
+	public void setBarcodes(Barcode[] barcodes) {
+		this.barcodes = barcodes;
 	}
 
 	public Long getLegoItemNumbers() {
@@ -274,8 +273,8 @@ public class Brickset {
 		builder.append(dimensions);
 		builder.append(", weight=");
 		builder.append(weight);
-		builder.append(", barCodes=");
-		builder.append(barCodes);
+		builder.append(", barcodes=");
+		builder.append(Arrays.toString(barcodes));
 		builder.append(", legoItemNumbers=");
 		builder.append(legoItemNumbers);
 		builder.append(", availability=");

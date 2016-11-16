@@ -17,6 +17,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.unideb.inf.brickset.model.Barcode;
 import hu.unideb.inf.brickset.model.Brickset;
 import hu.unideb.inf.brickset.model.CurrentValue;
 import hu.unideb.inf.brickset.model.Dimensions;
@@ -276,16 +277,38 @@ public class BricksetParser {
 	private void parseBarcodes(Document doc, Brickset brickset) {
 		String barcodesString = extractBricksetDescription(doc, "Barcodes");
 		if (StringUtils.isNotBlank(barcodesString)) {
-			Pattern pattern = Pattern.compile("UPC: (?<UPC>\\d+) EAN: (?<EAN>\\d+)");
-			Matcher matcher = pattern.matcher(barcodesString);
+			String upc = null;
+			String ean = null;
+
+			Pattern upcPattern = Pattern.compile(".*UPC: (?<UPC>\\d+).*");
+			Matcher matcher = upcPattern.matcher(barcodesString);
 			if (matcher.matches()) {
-				String upc = matcher.group("UPC");
-				String ean = matcher.group("EAN");
-				
-				log.debug("Barcodes UPC: '{}', EAN: '{}'", upc, ean);
+				upc = matcher.group("UPC");
 			}
+
+			Pattern eanPattern = Pattern.compile(".*EAN: (?<EAN>\\d+).*");
+			matcher = eanPattern.matcher(barcodesString);
+			if (matcher.matches()) {
+				ean = matcher.group("EAN");
+			}
+			log.debug("Barcodes UPC: '{}', EAN: '{}'", upc, ean);
+
+			List<Barcode> barcodes = new ArrayList<>();
+			if (StringUtils.isNotBlank(upc)) {
+				Barcode barcode = new Barcode();
+				barcode.setType("UPC");
+				barcode.setValue(upc);
+				barcodes.add(barcode);
+			}
+			if (StringUtils.isNotBlank(ean)) {
+				Barcode barcode = new Barcode();
+				barcode.setType("EAN");
+				barcode.setValue(ean);
+				barcodes.add(barcode);
+			}
+			brickset.setBarcodes(barcodes.toArray(new Barcode[barcodes.size()]));
 		}
-		log.debug("Extracted barcodes: {}", brickset.getBarCodes());
+		log.debug("Extracted barcodes: {}", Arrays.toString(brickset.getBarcodes()));
 	}
 
 	private void parseLegoItemNumbers(Document doc, Brickset brickset) {
