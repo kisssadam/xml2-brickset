@@ -274,7 +274,17 @@ public class BricksetParser {
 	}
 
 	private void parseBarcodes(Document doc, Brickset brickset) {
-		// TODO
+		String barcodesString = extractBricksetDescription(doc, "Barcodes");
+		if (StringUtils.isNotBlank(barcodesString)) {
+			Pattern pattern = Pattern.compile("UPC: (?<UPC>\\d+) EAN: (?<EAN>\\d+)");
+			Matcher matcher = pattern.matcher(barcodesString);
+			if (matcher.matches()) {
+				String upc = matcher.group("UPC");
+				String ean = matcher.group("EAN");
+				
+				log.debug("Barcodes UPC: '{}', EAN: '{}'", upc, ean);
+			}
+		}
 		log.debug("Extracted barcodes: {}", brickset.getBarCodes());
 	}
 
