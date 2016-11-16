@@ -13,9 +13,32 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "uri", "number", "name", "type", "themeGroup", "theme", "subTheme", "yearReleased", "tags",
-		"pieces", "minifigs", "rrp", "currentValue", "pricePerPiece", "ageRange", "packaging", "dimensions", "weight",
-		"barcodes", "legoItemNumbers", "availability", "rating" })
+@XmlType(
+	propOrder = {
+		"uri",
+		"number",
+		"name",
+		"type",
+		"themeGroup",
+		"theme",
+		"subTheme",
+		"yearReleased",
+		"tags",
+		"pieces",
+		"minifigs",
+		"rrp",
+		"currentValue",
+		"pricePerPiece",
+		"ageRange",
+		"packaging",
+		"dimensions",
+		"weight",
+		"barcodes",
+		"legoItemNumbers",
+		"availability",
+		"rating"
+	}
+)
 public class Brickset {
 
 	@XmlAttribute(required = true)

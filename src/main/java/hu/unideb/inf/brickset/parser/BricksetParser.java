@@ -80,48 +80,55 @@ public class BricksetParser {
 	}
 
 	private void parseSetNumber(Document doc, Brickset brickset) {
-		brickset.setNumber(extractBricksetDescription(doc, "Set number"));
-		log.debug("Extracted set number: '{}'", brickset.getNumber());
+		String setNumber = extractBricksetDescription(doc, "Set number");
+		log.debug("Extracted set number: '{}'", setNumber);
+		brickset.setNumber(setNumber);
 	}
 
 	private void parseName(Document doc, Brickset brickset) {
-		brickset.setName(extractBricksetDescription(doc, "Name"));
-		log.debug("Extracted name: '{}'", brickset.getName());
+		String name = extractBricksetDescription(doc, "Name");
+		log.debug("Extracted name: '{}'", name);
+		brickset.setName(name);
 	}
 
 	private void parseSetType(Document doc, Brickset brickset) {
-		brickset.setType(extractBricksetDescription(doc, "Set type"));
-		log.debug("Extracted set type: '{}'", brickset.getType());
+		String setType = extractBricksetDescription(doc, "Set type");
+		log.debug("Extracted set type: '{}'", setType);
+		brickset.setType(setType);
 	}
 
 	private void parseThemeGroup(Document doc, Brickset brickset) {
-		brickset.setThemeGroup(extractBricksetDescription(doc, "Theme group"));
-		log.debug("Extracted theme group: '{}'", brickset.getThemeGroup());
+		String themeGroup = extractBricksetDescription(doc, "Theme group");
+		log.debug("Extracted theme group: '{}'", themeGroup);
+		brickset.setThemeGroup(themeGroup);
 	}
 
 	private void parseTheme(Document doc, Brickset brickset) {
-		UriValuePair<String> theme = new UriValuePair<>();
-		theme.setUri(extractBricksetDescriptionUri(doc, "Theme"));
-		theme.setValue(extractBricksetDescription(doc, "Theme"));
-		brickset.setTheme(theme);
-		log.debug("Extracted theme: {}", brickset.getTheme());
+		String themeUri = extractBricksetDescriptionUri(doc, "Theme");
+		String themeValue = extractBricksetDescription(doc, "Theme");
+		log.debug("Extracted themeUri: '{}', themeValue: '{}'", themeUri, themeValue);
+
+		brickset.setTheme(new UriValuePair<String>(themeUri, themeValue));
 	}
 
 	private void parseSubTheme(Document doc, Brickset brickset) {
-		UriValuePair<String> subTheme = new UriValuePair<>();
-		subTheme.setUri(extractBricksetDescriptionUri(doc, "Subtheme"));
-		subTheme.setValue(extractBricksetDescription(doc, "Subtheme"));
-		brickset.setSubTheme(subTheme);
-		log.debug("Extracted subtheme: {}", brickset.getSubTheme());
+		String subThemeUri = extractBricksetDescriptionUri(doc, "Subtheme");
+		String subThemeValue = extractBricksetDescription(doc, "Subtheme");
+		log.debug("Extracted subTheme uri: '{}', value: '{}'", subThemeUri, subThemeValue);
+
+		brickset.setSubTheme(new UriValuePair<String>(subThemeUri, subThemeValue));
 	}
 
 	private void parseYearReleased(Document doc, Brickset brickset) {
-		UriValuePair<Integer> yearReleased = new UriValuePair<>();
-		yearReleased.setUri(extractBricksetDescriptionUri(doc, "Year released"));
+		String yearReleasedUri = extractBricksetDescriptionUri(doc, "Year released");
 		String yearReleasedValue = extractBricksetDescription(doc, "Year released");
+
+		log.debug("Extracted year released uri: '{}', value: '{}'", yearReleasedUri, yearReleasedValue);
+
+		UriValuePair<Integer> yearReleased = new UriValuePair<>();
+		yearReleased.setUri(yearReleasedUri);
 		yearReleased.setValue(yearReleasedValue == null ? null : Integer.valueOf(yearReleasedValue));
 		brickset.setYearReleased(yearReleased);
-		log.debug("Extracted year released: {}", brickset.getYearReleased());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -133,13 +140,9 @@ public class BricksetParser {
 			tagElements.forEach(tag -> {
 				String tagUri = tag.absUrl("href");
 				String tagValue = tag.text().trim();
-
 				log.debug("tagUri: '{}', tagValue: '{}'", tagUri, tagValue);
 
-				UriValuePair<String> tagPair = new UriValuePair<>();
-				tagPair.setUri(tagUri);
-				tagPair.setValue(tagValue);
-				tags.add(tagPair);
+				tags.add(new UriValuePair<String>(tagUri, tagValue));
 			});
 		}
 		brickset.setTags(tags.toArray(new UriValuePair[tags.size()]));
@@ -147,21 +150,25 @@ public class BricksetParser {
 	}
 
 	private void parsePieces(Document doc, Brickset brickset) {
-		UriValuePair<Long> pieces = new UriValuePair<>();
-		pieces.setUri(extractBricksetDescriptionUri(doc, "Pieces"));
+		String piecesUri = extractBricksetDescriptionUri(doc, "Pieces");
 		String piecesValue = extractBricksetDescription(doc, "Pieces");
+		log.debug("Extracted pieces uri: '{}', value: '{}'", piecesUri, piecesValue);
+
+		UriValuePair<Long> pieces = new UriValuePair<>();
+		pieces.setUri(piecesUri);
 		pieces.setValue(piecesValue == null ? null : Long.valueOf(piecesValue));
 		brickset.setPieces(pieces);
-		log.debug("Extracted pieces: {}", brickset.getPieces());
 	}
 
 	private void parseMinifigs(Document doc, Brickset brickset) {
-		UriValuePair<Integer> minifigs = new UriValuePair<>();
-		minifigs.setUri(extractBricksetDescriptionUri(doc, "Minifigs"));
+		String minifigsUri = extractBricksetDescriptionUri(doc, "Minifigs");
 		String minifigsValue = extractBricksetDescription(doc, "Minifigs");
+		log.debug("Extracted minifigs uri: '{}' value: '{}'", minifigsUri, minifigsValue);
+
+		UriValuePair<Integer> minifigs = new UriValuePair<>();
+		minifigs.setUri(minifigsUri);
 		minifigs.setValue(minifigsValue == null ? null : Integer.valueOf(minifigsValue));
 		brickset.setMinifigs(minifigs);
-		log.debug("Extracted minifigs: {}", brickset.getMinifigs());
 	}
 
 	private void parseRrp(Document doc, Brickset brickset) {
@@ -221,18 +228,21 @@ public class BricksetParser {
 	}
 
 	private void parsePricePerPiece(Document doc, Brickset brickset) {
-		brickset.setPricePerPiece(extractBricksetDescription(doc, "Price per piece"));
-		log.debug("Extracted price per piece: '{}'", brickset.getPricePerPiece());
+		String pricePerPiece = extractBricksetDescription(doc, "Price per piece");
+		log.debug("Extracted price per piece: '{}'", pricePerPiece);
+		brickset.setPricePerPiece(pricePerPiece);
 	}
 
 	private void parseAgeRange(Document doc, Brickset brickset) {
-		brickset.setAgeRange(extractBricksetDescription(doc, "Age range"));
-		log.debug("Extracted age range: '{}'", brickset.getAgeRange());
+		String ageRange = extractBricksetDescription(doc, "Age range");
+		log.debug("Extracted age range: '{}'", ageRange);
+		brickset.setAgeRange(ageRange);
 	}
 
 	private void parsePackaging(Document doc, Brickset brickset) {
-		brickset.setPackaging(extractBricksetDescription(doc, "Packaging"));
-		log.debug("Extracted packaging: '{}'", brickset.getPackaging());
+		String packaging = extractBricksetDescription(doc, "Packaging");
+		log.debug("Extracted packaging: '{}'", packaging);
+		brickset.setPackaging(packaging);
 	}
 
 	private void parseDimensions(Document doc, Brickset brickset) {
@@ -319,12 +329,12 @@ public class BricksetParser {
 	private void parseLegoItemNumbers(Document doc, Brickset brickset) {
 		String legoItemNumbersString = extractBricksetDescription(doc, "LEGO item numbers");
 		if (StringUtils.isNotBlank(legoItemNumbersString)) {
-			Pattern pattern = Pattern.compile(".*: (?<legoItemNumber>\\d+)");
+			Pattern pattern = Pattern.compile(".*: (?<legoItemNumbers>\\d+)");
 			Matcher matcher = pattern.matcher(legoItemNumbersString);
 			if (matcher.matches()) {
-				String legoItemNumber = matcher.group("legoItemNumber");
-				if (StringUtils.isNotBlank(legoItemNumber)) {
-					brickset.setLegoItemNumbers(Long.valueOf(legoItemNumber));
+				String legoItemNumbers = matcher.group("legoItemNumbers");
+				if (StringUtils.isNotBlank(legoItemNumbers)) {
+					brickset.setLegoItemNumbers(Long.valueOf(legoItemNumbers));
 				}
 			}
 		}
@@ -332,20 +342,23 @@ public class BricksetParser {
 	}
 
 	private void parseAvailability(Document doc, Brickset brickset) {
-		brickset.setAvailability(extractBricksetDescription(doc, "Availability"));
-		log.debug("Extracted availability: '{}'", brickset.getAvailability());
+		String availability = extractBricksetDescription(doc, "Availability");
+		log.debug("Extracted availability: '{}'", availability);
+		brickset.setAvailability(availability);
 	}
 
 	private void parseRating(Document doc, Brickset brickset) {
-		UriValuePair<BigDecimal> rating = new UriValuePair<>();
 		Element ratingElement = extractBricksetDescriptionElement(doc, "Rating");
-		String ratingValue = ratingElement.children().attr("title");
-		if (StringUtils.isNotBlank(ratingValue)) {
-			rating.setValue(new BigDecimal(ratingValue));
-		}
-		rating.setUri(ratingElement.children().attr("abs:href"));
+
+		String ratingUri = ratingElement.select("a").first().absUrl("href");
+		String ratingValue = ratingElement.select("div.rating").first().attr("title");
+
+		log.debug("Extracted rating uri: '{}', value: '{}'", ratingUri, ratingValue);
+
+		UriValuePair<BigDecimal> rating = new UriValuePair<>();
+		rating.setUri(ratingUri);
+		rating.setValue(StringUtils.isBlank(ratingValue) ? null : new BigDecimal(ratingValue));
 		brickset.setRating(rating);
-		log.debug("Extracted rating: {}", brickset.getRating());
 	}
 
 	private String extractBricksetDescription(Document doc, String descriptionName) {

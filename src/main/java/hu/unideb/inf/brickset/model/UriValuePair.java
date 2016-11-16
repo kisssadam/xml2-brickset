@@ -20,6 +20,12 @@ public class UriValuePair<T> {
 		super();
 	}
 
+	public UriValuePair(String uri, T value) {
+		super();
+		this.uri = uri;
+		this.value = value;
+	}
+
 	public String getUri() {
 		return uri;
 	}
