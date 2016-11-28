@@ -362,8 +362,15 @@ public class BricksetParser {
 	private void parseRating(Document doc, Brickset brickset) {
 		Element ratingElement = extractBricksetDescriptionElement(doc, "Rating");
 
-		String ratingUri = ratingElement.select("a").first().absUrl("href");
-		String ratingValue = ratingElement.select("div.rating").first().attr("title");
+		String ratingUri = null;
+		String ratingValue = null;
+
+		try {
+			ratingUri = ratingElement.select("a").first().absUrl("href");
+			ratingValue = ratingElement.select("div.rating").first().attr("title");
+		} catch (NullPointerException e) {
+			log.warn("Rating element not found or the birckset not yet reviewed!");
+		}
 
 		log.debug("Extracted rating uri: '{}', value: '{}'", ratingUri, ratingValue);
 

@@ -21,7 +21,9 @@ public class BricksetApplication extends Application {
 		Router router = new Router(getContext());
 
 		router.setDefaultMatchingQuery(true);
-		router.attach("/{setNumber}", BricksetResource.class);
+
+		router.attach("/set/{setNumber}", BricksetResource.class);
+		router.attach("/search?{query}", SearchResource.class);
 
 		return router;
 	}
