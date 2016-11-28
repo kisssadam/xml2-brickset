@@ -20,6 +20,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<restlet.version>2.3.7</restlet.version>
+		<junit.version>4.12</junit.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -67,6 +68,12 @@
 			<groupId>org.restlet.jse</groupId>
 			<artifactId>org.restlet.ext.jaxb</artifactId>
 			<version>${restlet.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<repositories>

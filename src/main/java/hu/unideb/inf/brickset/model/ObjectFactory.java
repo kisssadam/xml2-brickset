@@ -9,4 +9,8 @@ public class ObjectFactory {
 		return new Brickset();
 	}
 
+	public SearchResults createSearchResults() {
+		return new SearchResults();
+	}
+
 }

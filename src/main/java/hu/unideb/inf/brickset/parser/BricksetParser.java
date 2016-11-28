@@ -32,8 +32,10 @@ public class BricksetParser {
 	private static final String MALFORMED_DOCUMENT = "Malformed document";
 
 	public Brickset parse(String url) throws IOException {
-		Document doc = Jsoup.connect(url).userAgent("Mozilla")
-				.cookie("PreferredCountry2", "CountryCode=HU&CountryName=Hungary").get();
+		Document doc = Jsoup.connect(url)
+				.userAgent("Mozilla")
+				.cookie("PreferredCountry2", "CountryCode=HU&CountryName=Hungary")
+				.get();
 		Brickset brickset = parse(doc);
 		brickset.setUri(url);
 		return brickset;
@@ -82,7 +84,7 @@ public class BricksetParser {
 	private void parseSetNumber(Document doc, Brickset brickset) {
 		String setNumber = extractBricksetDescription(doc, "Set number");
 		log.debug("Extracted set number: '{}'", setNumber);
-		brickset.setNumber(setNumber);
+		brickset.setSetNumber(setNumber);
 	}
 
 	private void parseName(Document doc, Brickset brickset) {

@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(
 	propOrder = {
 		"uri",
-		"number",
+		"setNumber",
 		"name",
 		"type",
 		"themeGroup",
@@ -45,7 +45,7 @@ public class Brickset {
 	private String uri;
 
 	@XmlElement(required = true)
-	private String number;
+	private String setNumber;
 
 	@XmlElement(required = true)
 	private String name;
@@ -124,12 +124,12 @@ public class Brickset {
 		this.uri = uri;
 	}
 
-	public String getNumber() {
-		return number;
+	public String getSetNumber() {
+		return setNumber;
 	}
 
-	public void setNumber(String number) {
-		this.number = number;
+	public void setSetNumber(String setNumber) {
+		this.setNumber = setNumber;
 	}
 
 	public String getName() {
@@ -297,8 +297,8 @@ public class Brickset {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Brickset [uri=");
 		builder.append(uri);
-		builder.append(", number=");
-		builder.append(number);
+		builder.append(", setNumber=");
+		builder.append(setNumber);
 		builder.append(", name=");
 		builder.append(name);
 		builder.append(", type=");
