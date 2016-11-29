@@ -23,7 +23,7 @@ public class BricksetApplication extends Application {
 		router.setDefaultMatchingQuery(true);
 
 		router.attach("/set/{setNumber}", BricksetResource.class);
-		router.attach("/search?{query}", SearchResource.class);
+		router.attach("/search?{maxItems}{query}", SearchResource.class);
 
 		return router;
 	}

@@ -104,6 +104,7 @@
 				<configuration>
 					<sources>
 						<source>src/main/java/hu/unideb/inf/brickset/model/Brickset.java</source>
+						<source>src/main/java/hu/unideb/inf/brickset/model/SearchResults.java</source>
 					</sources>
 				</configuration>
 			</plugin>
