@@ -10,7 +10,7 @@ First compile the project:
 
 Then run it:
 
-```mvn exec:exec```
+```mvn exec:java```
 
 Finally open one of the following urls:
 
