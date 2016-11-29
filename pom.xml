@@ -61,7 +61,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.restlet.jse</groupId>
-			<artifactId>org.restlet.ext.json</artifactId>
+			<artifactId>org.restlet.ext.gson</artifactId>
 			<version>${restlet.version}</version>
 		</dependency>
 		<dependency>

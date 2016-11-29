@@ -17,7 +17,7 @@ public class SearchResource extends ServerResource {
 
 	private static final Logger log = LoggerFactory.getLogger(SearchResource.class);
 
-	@Get("xml")
+	@Get("xml|json")
 	public SearchResults findByKeywords() throws IOException {
 		String maxItemsString = getQueryValue("maxItems");
 		String query = getQueryValue("query");
