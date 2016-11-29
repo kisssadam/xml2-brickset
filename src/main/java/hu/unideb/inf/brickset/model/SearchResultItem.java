@@ -28,7 +28,7 @@ public class SearchResultItem {
 	private String name;
 	
 	@XmlElement(required = false)
-	private int pieces;
+	private Integer pieces;
 
 	public String getUri() {
 		return uri;
@@ -54,11 +54,11 @@ public class SearchResultItem {
 		this.name = name;
 	}
 	
-	public int getPieces() {
+	public Integer getPieces() {
 		return pieces;
 	}
 	
-	public void setPieces(int pieces) {
+	public void setPieces(Integer pieces) {
 		this.pieces = pieces;
 	}
 
