@@ -78,7 +78,6 @@ public class SearchResultsParser {
 		return nextPageDocument;
 	}
 
-	// TODO ezeket a metodusokat ugy is ki kell probalni, hogy csak 1 oldalas a result cucc!
 	private int getItemsTotal(Document document) {
 		int itemsTotal = 0;
 
