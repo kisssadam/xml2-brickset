@@ -2,6 +2,8 @@ package hu.unideb.inf.jaxb;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
+import java.io.Writer;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -23,6 +25,17 @@ public class JAXBUtil {
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 		marshaller.marshal(o, os);
+	}
+	
+	public static <T> String toXML(T t) throws JAXBException {
+		JAXBContext context = JAXBContext.newInstance(t.getClass());
+		Marshaller marshaller = context.createMarshaller();
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+		
+		Writer writer = new StringWriter();
+		marshaller.marshal(t, writer);
+		return writer.toString();
 	}
 
 	/**

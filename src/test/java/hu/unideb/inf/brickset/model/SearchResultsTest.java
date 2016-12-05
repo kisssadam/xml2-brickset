@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +33,10 @@ public class SearchResultsTest {
 	@Test
 	public void test() throws JAXBException, IOException {
 		SearchResults results = new SearchResults(2, 1, 2, items);
-		JAXBUtil.toXML(results, System.out);
+		String xml = JAXBUtil.toXML(results);
+
+		Assert.assertNotNull(xml);
+		Assert.assertNotEquals(StringUtils.EMPTY, xml);
 	}
 
 }

@@ -23,7 +23,6 @@ import hu.unideb.inf.brickset.model.CurrentValue;
 import hu.unideb.inf.brickset.model.Dimensions;
 import hu.unideb.inf.brickset.model.Price;
 import hu.unideb.inf.brickset.model.UriValuePair;
-import hu.unideb.inf.jaxb.JAXBUtil;
 
 public class BricksetParser {
 
@@ -404,18 +403,6 @@ public class BricksetParser {
 	private Element extractBricksetDescriptionElement(Document doc, String descriptionName) {
 		String cssQuery = ".featurebox > div > dl > dt:matchesOwn(^" + descriptionName + "$) + dd";
 		return doc.select(cssQuery).first();
-	}
-
-	public static void main(String[] args) throws Exception {
-		String url = "http://brickset.com/sets/7965-1/Millennium-Falcon";
-		// String url = "http://brickset.com/sets/4501-1/Mos-Eisley-Cantina";
-		// String url = "http://brickset.com/sets/30346-1/Prison-Island-Helicopter";
-
-		Brickset brickset = new BricksetParser().parse(url);
-
-		JAXBUtil.toXML(brickset, System.out);
-
-		log.info("Parsed brickset: {}", brickset);
 	}
 
 }
