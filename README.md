@@ -1,5 +1,7 @@
 # Brickset website parser
 
+[![Build Status](https://travis-ci.org/kisssandoradam/xml2-brickset.svg?branch=master)](https://travis-ci.org/kisssandoradam/xml2-brickset)
+
 This program created for the so called "Advanced XML Techniques" subject at University of Debrecen.
 
 # Usage
